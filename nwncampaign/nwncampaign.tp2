@@ -1,0 +1,50 @@
+BACKUP ~nwncampaign/backup~
+AUTHOR ~tipun~
+
+BEGIN ~Files for NWN Campaign~
+REQUIRE_PREDICATE ( MOD_IS_INSTALLED ~Setup-NWNForBG.tp2~ ~0~ ) ~NWN For BG is not installed.~
+REQUIRE_PREDICATE ( GAME_IS ~bg2ee eet~ ) ~This mod is only for BG2EE or EET games.~
+
+//ACTION_IF GAME_IS ~bg2ee eet~ BEGIN
+
+	INCLUDE ~%MOD_FOLDER%/lib/_campaign.tph~
+	
+	/*OUTER_SPRINT printaa ~~
+	INCLUDE ~%MOD_FOLDER%/lib/func.tph~
+	COPY_EXISTING ~m_k#tbl.lua~ ~override~
+		LPF FC_FIND_UI_TABLE
+			STR_VAR searchtabl = "startCampaignData"
+			RET offset_start offset_end offset_open numpairs
+			RET_ARRAY numpairs tables
+		END
+		SPRINT printaa ~%printaa%startCampaignData%LNL%%numpairs%%LNL%~
+		FOR ( i = 1 ; i <= numpairs ; ++i ) BEGIN
+			SPRINT txt $tables(~%i%~)
+			SPRINT printaa ~%printaa%%txt%%LNL%~
+		END
+		SPRINT printaa ~%printaa%%LNL%~
+		LPF FC_FIND_UI_TABLE
+			STR_VAR searchtabl = "eetStrings"
+			RET offset_start offset_end offset_open numpairs
+			RET_ARRAY numpairs tables
+		END
+		SPRINT printaa ~%printaa%eetStrings%LNL%%numpairs%%LNL%~
+		FOR ( i = 1 ; i <= numpairs ; ++i ) BEGIN
+			SPRINT txt $tables(~%i%~)
+			SPRINT printaa ~%printaa%%txt%%LNL%~
+		END
+		SPRINT printaa ~%printaa%%LNL%~
+		LPF FC_FIND_UI_TABLE
+			STR_VAR searchtabl = "bioClassData"
+			RET offset_start offset_end offset_open numpairs
+			RET_ARRAY numpairs tables
+		END
+		SPRINT printaa ~%printaa%bioClassData%LNL%%numpairs%%LNL%~
+		FOR ( i = 1 ; i <= numpairs ; ++i ) BEGIN
+			SPRINT txt $tables(~%i%~)
+			SPRINT printaa ~%printaa%%txt%%LNL%~
+		END
+		
+	PRINT ~%printaa%~*/
+		
+//END

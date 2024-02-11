@@ -1,0 +1,497 @@
+INCLUDE ~nwncampaign/lib/edit_bam.tph~
+INCLUDE ~nwncampaign/lib/campaigns.tph~
+INCLUDE ~nwncampaign/lib/func.tph~
+
+<<<<<<<< file.file
+%script_text%
+>>>>>>>>
+LOAD_TRA ~%MOD_FOLDER%/nwn.tra~
+//worldscript 
+/*OUTER_SPRINT ~script_text~ ~~
+COPY_EXISTING ~baldur.bcs~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		SET start_off = 0
+		SET end_off = 0
+		SET check = 0
+		LPF GET_SCRIPT_BLOCK STR_VAR search_regexp = "Torgal" RET check = start_offset END
+		WHILE start_off >= 0 BEGIN
+			LPF GET_SCRIPT_BLOCK
+				INT_VAR start_offset = start_off
+				STR_VAR search_regexp = "nw"
+				RET script_block start_off = start_offset end_off = end_offset
+			END
+//PATCH_PRINT ~XXXXXXXXXXXXXXXXXXXXXXXXXXX~ /* +-+-+-+- */
+			PATCH_IF start_off < check BEGIN
+				PATCH_IF start_off >= 0 BEGIN
+					SET NWMess = 0
+					PATCH_IF NOT NWMess BEGIN
+						SET len = STRING_LENGTH ~%script_block%~ - 9
+						INNER_PATCH ~%script_block%~ BEGIN
+							FOR ( i = 0 ; i < len ; ++i ) BEGIN
+								READ_ASCII i stri (6)
+								PATCH_IF ( ~%stri%~ STR_EQ ~NWMess~ ) BEGIN
+									SET NWMess = 1
+									SET i = len
+								END
+							END
+						END
+						PATCH_IF NWMess BEGIN SPRINT script_block ~~ END
+					END
+					SPRINT ~script_text~ ~%script_block%%LNL%%LNL%~
+				END
+			END
+		END
+	END
+	BUT_ONLY_IF_IT_CHANGES
+COPY ~file.file~ ~override/NWNWSCRP.bcs~ COMPILE_BAF_TO_BCS EVALUATE_BUFFER*/
+COMPILE ~%MOD_FOLDER%/NWNWSCRP.BAF~
+
+//song
+COPY_EXISTING ~songlist.2da~ ~override~
+	COUNT_2DA_ROWS 3 rows
+	FOR ( row = 1 ; row < rows ; ++row ) BEGIN
+		READ_2DA_ENTRY row 0 3 index
+		READ_2DA_ENTRY row 1 3 theme
+		PATCH_IF ( ~%theme%~ STRING_EQUAL_CASE ~NWNThm~ ) BEGIN
+			PATCH_PRINT ~nwn_music = %index%~
+			SET nwn_music = %index%
+		END
+	END
+    BUT_ONLY_IF_IT_CHANGES
+ACTION_IF !(VARIABLE_IS_SET %nwn_music%) BEGIN
+	OUTER_SPRINT nwn_music ~*~
+END
+
+//NWSTARTA
+OUTER_SPRINT ~script_text~ ~2DA                 V1.0
+BADVAL
+                    VALUE
+START_AREA          NW1001
+START_XPOS          1073
+START_YPOS          790
+START_AREA_TUTORIAL TU0015
+START_XPOS_TUTORIAL 607
+START_YPOS_TUTORIAL 660
+START_AREA_MP       NW1001 
+START_XPOS_MP       1073   
+START_YPOS_MP       790    
+START_XP            1500000
+START_XP_CAP        8000000
+START_MP_XP_CAP     8000000~
+COPY ~file.file~ ~override/NWSTARTA.2DA~ EVALUATE_BUFFER PRETTY_PRINT_2DA
+
+//NWSTARTP
+OUTER_SPRINT ~script_text~ ~2DA V1.0
+0
+                    1       2       3       4       5       6
+START_XPOS          1119    1054    1123    988     1043    1112
+START_YPOS          744     758     791     789     813     843
+START_XPOS_TUTORIAL 607     607     607     607     607     607 
+START_YPOS_TUTORIAL 660     607     607     607     607     607 
+START_XPOS_MP       1119    1054    1123    988     1043    1112
+START_YPOS_MP       744     758     791     789     813     843 ~
+COPY ~file.file~ ~override/NWSTARTP.2DA~ EVALUATE_BUFFER PRETTY_PRINT_2DA
+
+//NWSTARTG
+OUTER_SPRINT ~script_text~ ~2DA                 V1.0
+0
+                    SIDES               ROLLS               MODIFIER            MULTIPLIER
+MAGE	40	4	1	100
+FIGHTER	40	6	0	100
+CLERIC	60	4	0	100
+THIEF	60	4	0	100
+BARD	60	4	0	100
+PALADIN	40	6	0	100
+DRUID	60	4	0	100
+RANGER	40	6	0	100
+FIGHTER_MAGE	40	6	0	100
+FIGHTER_CLERIC	40	6	0	100
+FIGHTER_THIEF	40	6	0	100
+FIGHTER_MAGE_THIEF	40	6	0	100
+MAGE_THIEF	60	3	0	100
+CLERIC_MAGE	60	4	0	100
+CLERIC_THIEF	60	4	0	100
+FIGHTER_DRUID	40	6	0	100
+FIGHTER_MAGE_CLERIC	40	6	0	100
+CLERIC_RANGER	40	6	0	100
+SORCERER	40	4	1	100
+MONK	40	4	1	100
+SHAMAN	60	4	0	100~
+COPY ~file.file~ ~override/NWSTARTG.2DA~ EVALUATE_BUFFER PRETTY_PRINT_2DA
+
+//NWNREPUT
+OUTER_SPRINT ~script_text~ ~2DA             V1.0
+0
+                KILL_INNOCENT   INJURE_INNOCENT STEAL           KILL_FIST       MONEY_CHURCH    MONEY_BEGGAR    MAGIC_CHURCH    KILL_EVIL       BASE_CHURCH     KILL_WATCHER    KILL_AMNISH     KILL_GUARD
+1               0               0               0               0               0               0               0               0               0               0               0               0
+2               0               0               0               0               0               0               0               0               0               0               0               0
+3               0               0               0               0               0               0               0               0               0               0               0               0
+4               0               0               0               0               0               0               0               0               0               0               0               0
+5               0               0               0               0               0               0               0               0               0               0               0               0
+6               0               0               0               0               0               0               0               0               0               0               0               0
+7               0               0               0               0               0               0               0               0               0               0               0               0
+8               0               0               0               0               0               0               0               0               0               0               0               0
+9               0               0               0               0               0               0               0               0               0               0               0               0
+10              0               0               0               0               0               0               0               0               0               0               0               0
+11              0               0               0               0               0               0               0               0               0               0               0               0
+12              0               0               0               0               0               0               0               0               0               0               0               0
+13              0               0               0               0               0               0               0               0               0               0               0               0
+14              0               0               0               0               0               0               0               0               0               0               0               0
+15              0               0               0               0               0               0               0               0               0               0               0               0
+16              0               0               0               0               0               0               0               0               0               0               0               0
+17              0               0               0               0               0               0               0               0               0               0               0               0
+18              0               0               0               0               0               0               0               0               0               0               0               0
+19              0               0               0               0               0               0               0               0               0               0               0               0
+20              0               0               0               0               0               0               0               0               0               0               0               0
+~
+COPY ~file.file~ ~override/NWNREPUT.2DA~ EVALUATE_BUFFER PRETTY_PRINT_2DA
+
+
+ACTION_IF GAME_IS eet BEGIN
+//BLOCK LOGOS
+	LAF ADD_BAM_FRAME
+		STR_VAR
+			path_to_bam   = EVAL "%MOD_FOLDER%/logopis/0000.bam"
+			patch_to_pvrz = EVAL "%MOD_FOLDER%/logopis"
+			bam_to_add    = "title"
+		RET
+			line_text = new_frame_index
+	END
+	
+	PRINT ~New frame index = %line_text%~
+	
+	LAF ADD_BAM_FRAME
+		STR_VAR
+			path_to_bam   = EVAL "%MOD_FOLDER%/biglogo/0000.bam"
+			patch_to_pvrz = EVAL "%MOD_FOLDER%/biglogo"
+			bam_to_add    = "biglogo"
+		RET
+			biglogo = new_frame_index
+	END
+	
+	PRINT ~New frame index = %biglogo%~
+	
+	LAF ADD_BAM_FRAME
+		INT_VAR
+			seq           = 1
+		STR_VAR
+			path_to_bam   = EVAL "%MOD_FOLDER%/cmpgeet/0000.bam"
+			patch_to_pvrz = EVAL "%MOD_FOLDER%/cmpgeet"
+			bam_to_add    = "cmpgeet"
+		RET
+			cmplogo = new_frame_index
+	END
+	
+	PRINT ~New frame index = %cmplogo%~
+//BLOCKEND
+	OUTER_SET camp_number = 0
+	COPY_EXISTING ~campaign.2da~ ~override~
+		COUNT_2DA_ROWS 3 camp_number
+		BUT_ONLY
+	LAF CAMPAIGN_EXISTS STR_VAR campaign=NWN RET cmp_exists = exists END
+	ACTION_IF NOT cmp_exists BEGIN
+		LAF SET_CAMPAIGN_INFO
+			INT_VAR
+				create_new          = 1
+				cmp_icon            = cmplogo
+				cmp_music           = nwn_music
+				cmp_map_dropshadow  = 1
+				cmp_keep_powers     = 0
+			STR_VAR
+				campaign            = ~NWN~
+				cmp_worldscript     = ~NWNWSCRP~
+				cmp_interdia        = ~INTERDIA~
+				cmp_loadhint        = ~*~
+				cmp_masterarea      = ~MASTAREA~
+				cmp_npclevel        = ~*~
+				cmp_tbpparty        = ~25PARTY~
+				cmp_pdialog         = ~PDIALOG~
+				cmp_save_dir        = ~save~
+				cmp_startare        = ~NWSTARTA~
+				cmp_strtgold        = ~NWSTARTG~
+				cmp_startpos        = ~NWSTARTP~
+				cmp_stweapon        = ~STWEAPON~
+				cmp_25stweap        = ~STWEAPON~
+				cmp_xpcap           = ~*~
+				cmp_xplist          = ~*~
+				cmp_worldmap        = ~NWNWORLD~
+				cmp_worldscript2    = ~NWNWSCRP~
+				cmp_map_fontcolor   = ~0xFFFFFFFF~
+				cmp_intro_movie     = ~NWNPRE~
+				cmp_import          = ~PARTY~
+				cmp_interact        = ~INTERACT~
+				cmp_years           = ~D5NWYRS~
+				cmp_reputation      = ~NWNREPUT~
+				cmp_clastext        = ~CLASTEXT~
+				cmp_racetext        = ~RACETEXT~
+		END
+	END
+	COPY_EXISTING ~campaign.2da~ ~override~ PRETTY_PRINT_2DA
+//BLOCK LUA
+
+
+OUTER_SET cnt = 2000210
+OUTER_SPRINT nwn_title (AT cnt)
+OUTER_PATCH_SAVE nwn_title ~%nwn_title%~ BEGIN
+	REPLACE_TEXTUALLY ~%LNL%~ ~\n~
+	REPLACE_TEXTUALLY ~"~ ~\"~
+END
+
+OUTER_SET cnt = 2000200
+OUTER_SPRINT nwn_text (AT cnt)
+OUTER_PATCH_SAVE nwn_text ~%nwn_text%~ BEGIN
+	REPLACE_TEXTUALLY ~%LNL%~ ~\n~
+	REPLACE_TEXTUALLY ~"~ ~\"~
+END
+
+/*COPY_EXISTING ~M_K#EET.LUA~ ~override~
+	/* chapters */
+	BUT_ONLY_IF_IT_CHANGES
+
+COPY_EXISTING ~M_K#TBL.LUA~ ~override~*/
+/*OUTER_SPRINT upd_file ~~
+OUTER_SPRINT upd_data ~~*/
+COPY_EXISTING_REGEXP GLOB ~^M_.*\.LUA~ ~override~
+	/*chapters*/
+	/*tables*/
+	SET exists = 0
+	LPF FC_FIND_UI_TABLE
+		STR_VAR searchtabl = "startCampaignData"
+		RET offset_start offset_end offset_open numpairs exists
+		RET_ARRAY numpairs tables
+	END
+	PATCH_IF exists BEGIN
+		SPRINT str_all ~~
+		SPRINT ~camp~ ~{id = 'NWN', name = 'EET_CMP_TITLE_NWN', description = 'EET_CMP_TEXT_NWN', title = %line_text%, bigLogo = %biglogo%, icon = %cmplogo%, background = 2, button = 2, sidebar = 2, importEnabled = false, tutorialEnabled = false, forceParty = false, cheatAreasTable = cheatAreas},~
+		//SET number = 1
+		FOR ( i = 1 ; i <= numpairs ; ++i ) BEGIN
+			SPRINT str $tables(~%i%~)
+			INNER_PATCH_SAVE sss ~%str%~ BEGIN
+				REPLACE_EVALUATE ~[ %TAB%%LNL%%WNL%%MNL%]*{id = '\([A-Za-z0-9]+\)',.*$~
+				BEGIN
+					SET x = 0
+				END
+				~%MATCH1%~
+			END
+			PATCH_IF ( ( ~%str%~ STRING_CONTAINS_REGEXP ~EET_CMP_TITLE_BP1~ ) = 0 ) BEGIN
+				SPRINT str ~%camp%%LNL%%TAB%%str%~
+			/*	SPRINT upd_data ~%upd_data%%TAB%START_CAMPAIGN_NWN = %number%,%LNL%~
+				SET number = number + 1
+			//END ELSE BEGIN
+			*/
+			END
+			/*	SPRINT upd_data ~%upd_data%%TAB%START_CAMPAIGN_%sss% = %number%,%LNL%~
+				SET number = number + 1*/
+			SPRINT str_all ~%str_all%%LNL%%TAB%%str%~
+		END
+		SPRINT str_all ~startCampaignData = {%LNL%%TAB%%str_all%%LNL%}~
+		DELETE_BYTES offset_start ( offset_end - offset_start )
+		SET len = STRING_LENGTH ~%str_all%~
+		INSERT_BYTES offset_start len
+		WRITE_ASCIIE offset_start ~%str_all%~ (len)
+		SET exists = 0
+		/*
+		SPRINT upd_file ~%SOURCE_RES%~
+		SPRINT upd_data ~updateTable(const, {%LNL%%upd_data%%LNL%})~*/
+	END
+	LPF FC_FIND_UI_TABLE
+		STR_VAR searchtabl = "eetStrings"
+		RET offset_start offset_end offset_open numpairs exists
+		RET_ARRAY numpairs tables
+	END
+	PATCH_IF exists BEGIN
+		SPRINT str_all ~~
+		SPRINT camp ~EET_CMP_TITLE_NWN = "%nwn_title%",%LNL%%TAB%EET_CMP_TEXT_NWN = "%nwn_text%",~
+		READ_ASCII offset_start str_all ( offset_end - offset_start )
+		INNER_PATCH_SAVE str_all ~%str_all%~ BEGIN
+			REPLACE_TEXTUALLY ~EET_CMP_TITLE_BP1~ ~%camp%%LNL%%TAB%EET_CMP_TITLE_BP1~
+		END
+		DELETE_BYTES offset_start ( offset_end - offset_start )
+		SET len = STRING_LENGTH ~%str_all%~
+		INSERT_BYTES offset_start len
+		WRITE_ASCIIE offset_start ~%str_all%~ (len)
+		SET exists = 0
+	END
+
+/*<<<<<<<< upd_table.lua
+
+
+function updateTable(first, second)
+	for k, v in pairs(second) do
+		first[k] = v
+	end
+end
+%upd_data%
+>>>>>>>>
+COPY_EXISTING ~%upd_file%.LUA~ ~override~
+	APPEND_FILE_EVALUATE ~upd_table.lua~*/
+COPY_EXISTING ~bgee.lua~ ~override~
+	REPLACE_TEXTUALLY ~START_CAMPAIGN_TUT = 7,~ ~START_CAMPAIGN_TUT = 7,%LNL%%TAB%START_CAMPAIGN_NWN = %camp_number%,~
+/*	LPF FC_FIND_UI_TABLE /* tuta */
+		STR_VAR searchtabl = "const"
+		RET offset_start offset_end offset_open numpairs exists
+		RET_ARRAY numpairs tables
+	END
+	PATCH_PRINT ~const(%SOURCE_RES%) = %offset_start%  %offset_end%  %offset_open%  %numpairs%  %exists%~
+	PATCH_IF exists BEGIN
+		SPRINT str_all ~~
+		READ_ASCII offset_start str_all ( offset_end - offset_start )
+		/*INNER_PATCH_SAVE str_all ~%str_all%~ BEGIN
+			REPLACE_EVALUATE ~START_CAMPAIGN_BP1[ %TAB%]*=[ %TAB%]*\([0-9]+\)[ %TAB%]*,~
+			BEGIN
+				SET number = MATCH1
+			END
+			~%MATCH1%~
+			REPLACE_EVALUATE ~START_CAMPAIGN_\([A-Za-z]\)[ %TAB%]*=[ %TAB%]*\([0-9]+\)[ %TAB%]*,~
+			BEGIN
+				PATCH_IF ( MATCH2 >= number ) BEGIN
+					SET idx = MATCH2 + 1
+				END
+			END
+			~START_CAMPAIGN_%MATCH1% = %idx%,~
+			
+			REPLACE_TEXTUALLY ~START_CAMPAIGN_BP1~ ~START_CAMPAIGN_NWN = %number%,%LNL%%TAB%START_CAMPAIGN_BP1~
+		END*/
+		
+		INNER_PATCH ~%str_all%~ BEGIN
+			LPF READ_TEXT_LINES	RET	lines RET_ARRAY	lines END
+		END
+		SET number = ( 0 - 1 )
+		PATCH_IF ( lines > 0 ) BEGIN
+			FOR ( i = 0 ; i < lines ; ++i ) BEGIN
+				SPRINT str $lines(~%i%~)
+				PATCH_IF ( ~%str%~ STRING_CONTAINS_REGEXP ~START_CAMPAIGN_BP1~ ) = 0 BEGIN
+					REPLACE_EVALUATE ~START_CAMPAIGN_BP1[ %TAB%]*=[ %TAB%]*\([0-9]+\)[ %TAB%]*,~
+					BEGIN
+						SET number = MATCH1
+					END
+					~%MATCH1%~
+					SET i = lines
+				END
+				PATCH_PRINT ~%str%~
+			END
+		END
+		PATCH_PRINT ~number = %number%~
+		PATCH_IF ( number >= 0 ) BEGIN
+			SPRINT str_all ~~
+			FOR ( i = 0 ; i < lines ; ++i ) BEGIN
+				SPRINT str $lines(~%i%~)
+				SET adds = 0
+				PATCH_IF ( ~%str%~ STRING_CONTAINS_REGEXP ~START_CAMPAIGN_~ ) = 0 BEGIN
+					REPLACE_EVALUATE ~START_CAMPAIGN_.*[ %TAB%]*=[ %TAB%]*\([0-9]+\)[ %TAB%]*,~
+					BEGIN
+						PATCH_IF ( MATCH1 >= number ) BEGIN
+							SET result = MATCH1 + 1
+						END
+					END
+					~%result%~
+					SET adds = 1
+				END
+				PATCH_IF ( adds = 1 ) BEGIN
+					SPRINT str ~%TAB%START_CAMPAIGN_NWN = %number%,%LNL%%str%~
+				END
+				PATCH_PRINT ~%str%~
+				SPRINT str_all ~%str_all%%str%%LNL%~
+			END
+		END
+		
+		DELETE_BYTES offset_start ( offset_end - offset_start )
+		SET len = STRING_LENGTH ~%str_all%~
+		INSERT_BYTES offset_start len
+		WRITE_ASCIIE offset_start ~%str_all%~ (len)
+		SET exists = 0
+	END*/
+
+OUTER_SPRINT tilde "~"
+COPY_EXISTING ~ui.menu~ ~override~
+	/*REPLACE_TEXTUALLY ~elseif (chapter > 0) and (chapter < 7) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) then~ ~elseif (chapter > 0) and (chapter < 5) and (checkCampaign %tilde%= const.START_CAMPAIGN_NWN) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) then
+			currentCampaign = const.START_CAMPAIGN_NWN
+		elseif (chapter > 0) and (chapter < 7) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) then~*/
+	REPLACE_TEXTUALLY ~(chapter == 0)~ ~(chapter == 0) and (checkCampaign %tilde%= const.START_CAMPAIGN_NWN)~
+	REPLACE_TEXTUALLY ~elseif (chapter > 0) and (chapter < 7) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) then~ ~elseif (chapter > 0) and (chapter < 5) and (checkCampaign %tilde%= const.START_CAMPAIGN_NWN) and (Infinity_GetScriptVarInt('NWN_Quest_Status') == 1) then
+			currentCampaign = const.START_CAMPAIGN_NWN
+		elseif (chapter > 0) and (chapter < 7) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) then~
+
+ACTION_IF FILE_EXISTS ~EET/SoD_GUI/UI.MENU~ BEGIN
+	COPY ~EET/SoD_GUI/UI.MENU~ ~EET/SoD_GUI~
+		/*REPLACE_TEXTUALLY ~elseif (chapter > 0) and (chapter < 7) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) then~ ~elseif (chapter > 0) and (chapter < 5) and (checkCampaign %tilde%= const.START_CAMPAIGN_NWN) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) then
+			currentCampaign = const.START_CAMPAIGN_NWN
+		elseif (chapter > 0) and (chapter < 7) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) then~*/
+		REPLACE_TEXTUALLY ~(chapter == 0)~ ~(chapter == 0) and (checkCampaign %tilde%= const.START_CAMPAIGN_NWN)~
+		REPLACE_TEXTUALLY ~elseif (chapter > 0) and (chapter < 7) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) then~ ~elseif (chapter > 0) and (chapter < 5) and (checkCampaign %tilde%= const.START_CAMPAIGN_NWN) and (Infinity_GetScriptVarInt('NWN_Quest_Status') == 1) then
+			currentCampaign = const.START_CAMPAIGN_NWN
+		elseif (chapter > 0) and (chapter < 7) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) then~
+END
+//BLOCKEND
+END
+
+//NWN_BG
+OUTER_SET nwnbg = 0 - 1
+OUTER_SPRINT scr_nwn_bg ~~
+COPY_EXISTING ~NWN_BG.bcs~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		LPF GET_SCRIPT_BLOCK STR_VAR search_regexp = ~True~ RET scr_nwn_bg = script_block END
+		REPLACE_TEXTUALLY ~True()~ ~!Global("NWStandalone","GLOBAL",1)~
+	END
+
+OUTER_INNER_PATCH_SAVE scr_nwn_bg ~%scr_nwn_bg%~ BEGIN
+	REPLACE_EVALUATE ~DisplayStringHead(Player1,\([0-9]+\)~
+	BEGIN
+		SET nwnbg = MATCH1
+	END
+	~%MATCH1%~
+END
+
+<<<<<<<< nwn_bg_add.baf
+IF
+	Global("NWStandalone","GLOBAL",1)
+THEN
+	RESPONSE #100
+		CutSceneId(Player1)
+		DisplayStringHead(Player1,%nwnbg%)  // Погиб один из ключевых персонажей Невервинтера! Вы здесь больше не нужны.
+		Wait(5)
+		FadeToColor([20.0],0)
+		Wait(2)
+		FadeFromColor([20.0],0)
+		Wait(1)
+		EndCutSceneMode()
+		GameOver(%nwnbg%)
+END
+>>>>>>>>
+EXTEND_BOTTOM ~NWN_BG.bcs~ ~nwn_bg_add.baf~ EVALUATE_BUFFER
+/*ACTION_FOR_EACH NW1001 NW1005 MW1030 NW4011 BEGIN
+
+END*/
+COPY_EXISTING_REGEXP GLOB ~^NW.*\.bcs~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		LPF GET_SCRIPT_BLOCK
+			STR_VAR search_regexp = "NWN_BG"
+			RET script_block start_offset end_offset
+		END
+		PATCH_IF ( start_offset >= 0 ) BEGIN
+			DELETE_BYTES start_offset (end_offset - start_offset)
+			INNER_PATCH_SAVE block_final ~%script_block%~ BEGIN
+				REPLACE_TEXTUALLY ~StartCutSceneMode~ ~CloseCutSceneMode~
+				REPLACE_TEXTUALLY ~StartCutScene.*$~  ~StartCutSceneEx("NWN_BG",TRUE)~
+				REPLACE_TEXTUALLY ~CloseCutSceneMode~ ~StartCutSceneMode~
+			END
+			SET len = STRING_LENGTH ~%block_final%~
+			INSERT_BYTES start_offset len
+			WRITE_ASCIIE start_offset ~%block_final%~ (len)
+		END
+	END
+	BUT_ONLY_IF_IT_CHANGES
+
+COPY_EXISTING ~NW1001.bcs~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~SetGlobal("NWStandalone","GLOBAL",1)~ ~SetGlobal("NWStandalone","GLOBAL",1) SetGlobal("Chapter","GLOBAL",0)~
+	END
+
+COPY ~%MOD_FOLDER%/D5NWYRS.2DA~ ~override~
+
+
+
+
+
+
+
