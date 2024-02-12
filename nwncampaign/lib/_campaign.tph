@@ -327,15 +327,6 @@ COPY_EXISTING_REGEXP GLOB ~^NW.*\.bcs~ ~override~
 	END
 	BUT_ONLY_IF_IT_CHANGES
 
-COPY_EXISTING ~NW1001.bcs~ ~override~
-	DECOMPILE_AND_PATCH BEGIN
-		LPF GET_SCRIPT_BLOCK
-			STR_VAR search_regexp = ~NWMessenger_of_Neverwinter~
-			RET start_offset end_offset 
-		END
-		DELETE_BYTES start_offset ( end_offset - start_offset )
-	END
-
 <<<<<<<< NW1000_.baf
 IF
 	Global("NWMessenger_of_Neverwinter","GLOBAL",0)
