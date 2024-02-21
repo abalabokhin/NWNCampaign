@@ -1,7 +1,12 @@
 INCLUDE ~nwncampaign/lib/edit_bam.tph~
 INCLUDE ~nwncampaign/lib/campaigns.tph~
 INCLUDE ~nwncampaign/lib/func.tph~
-
+INCLUDE ~nwncampaign/lib/lua_functions.tph~
+/* todo:
+4. Главы НВН
+5. Количество золота. Надо в экселе таблицу накатать для оригинальных значений и на их основе сделать свою
+*/ 
+OUTER_SPRINT tilde "~"
 <<<<<<<< file.file
 %script_text%
 >>>>>>>>
@@ -9,6 +14,8 @@ LOAD_TRA ~%MOD_FOLDER%/nwn.tra~
 //worldscript 
 COMPILE ~%MOD_FOLDER%/NWNWSCRP.BAF~
 
+PRINT ~Instlling 2da files...~
+SILENT //2da
 //song
 COPY_EXISTING ~songlist.2da~ ~override~
 	COUNT_2DA_ROWS 3 rows
@@ -108,10 +115,29 @@ OUTER_SPRINT ~script_text~ ~2DA             V1.0
 20              0               0               0               0               0               0               0               0               0               0               0               0
 ~
 COPY ~file.file~ ~override/NWNREPUT.2DA~ EVALUATE_BUFFER PRETTY_PRINT_2DA
+VERBOSE
+
+ACTION_IF FILE_EXISTS_IN_GAME ~%NWNWORLD.WMP%~ BEGIN
+	OUTER_SPRINT NWNWORLD ~NWNWORLD~
+END ELSE BEGIN
+	OUTER_SPRINT NWNWORLD ~WORLDMAP~
+END
 
 
-ACTION_IF GAME_IS eet BEGIN
 
+SILENT //biglogo bam
+LAF ADD_BAM_FRAME
+	STR_VAR
+		path_to_bam   = EVAL "%MOD_FOLDER%/biglogo/0000.bam"
+		patch_to_pvrz = EVAL "%MOD_FOLDER%/biglogo"
+		bam_to_add    = "biglogo"
+	RET
+		biglogo = new_frame_index
+END
+VERBOSE
+PRINT ~New frame index = %biglogo%~
+ACTION_IF GAME_IS ~eet~ BEGIN
+	SILENT //title bam
 	LAF ADD_BAM_FRAME
 		STR_VAR
 			path_to_bam   = EVAL "%MOD_FOLDER%/logopis/0000.bam"
@@ -120,18 +146,9 @@ ACTION_IF GAME_IS eet BEGIN
 		RET
 			line_text = new_frame_index
 	END
+	VERBOSE
 	PRINT ~New frame index = %line_text%~
-	
-	LAF ADD_BAM_FRAME
-		STR_VAR
-			path_to_bam   = EVAL "%MOD_FOLDER%/biglogo/0000.bam"
-			patch_to_pvrz = EVAL "%MOD_FOLDER%/biglogo"
-			bam_to_add    = "biglogo"
-		RET
-			biglogo = new_frame_index
-	END
-	PRINT ~New frame index = %biglogo%~
-	
+	SILENT //cmplogo bam
 	LAF ADD_BAM_FRAME
 		INT_VAR
 			seq           = 1
@@ -142,66 +159,84 @@ ACTION_IF GAME_IS eet BEGIN
 		RET
 			cmplogo = new_frame_index
 	END
+	VERBOSE
 	PRINT ~New frame index = %cmplogo%~
+END
 
-	OUTER_SET camp_number = 0
-	COPY_EXISTING ~campaign.2da~ ~override~
-		COUNT_2DA_ROWS 3 camp_number
-		BUT_ONLY
-	LAF CAMPAIGN_EXISTS STR_VAR campaign=NWN RET cmp_exists = exists END
-	ACTION_IF NOT cmp_exists BEGIN
-		LAF SET_CAMPAIGN_INFO
-			INT_VAR
-				create_new          = 1
-				cmp_icon            = cmplogo
-				cmp_music           = nwn_music
-				cmp_map_dropshadow  = 1
-				cmp_keep_powers     = 0
-			STR_VAR
-				campaign            = ~NWN~
-				cmp_worldscript     = ~NWNWSCRP~
-				cmp_interdia        = ~INTERDIA~
-				cmp_loadhint        = ~*~
-				cmp_masterarea      = ~MASTAREA~
-				cmp_npclevel        = ~*~
-				cmp_tbpparty        = ~25PARTY~
-				cmp_pdialog         = ~PDIALOG~
-				cmp_save_dir        = ~save~
-				cmp_startare        = ~NWSTARTA~
-				cmp_strtgold        = ~NWSTARTG~
-				cmp_startpos        = ~NWSTARTP~
-				cmp_stweapon        = ~STWEAPON~
-				cmp_25stweap        = ~STWEAPON~
-				cmp_xpcap           = ~*~
-				cmp_xplist          = ~*~
-				cmp_worldmap        = ~NWNWORLD~
-				cmp_worldscript2    = ~NWNWSCRP~
-				cmp_map_fontcolor   = ~0xFFFFFFFF~
-				cmp_intro_movie     = ~NWNPRE~
-				cmp_import          = ~PARTY~
-				cmp_interact        = ~INTERACT~
-				cmp_years           = ~D5NWYRS~
-				cmp_reputation      = ~NWNREPUT~
-				cmp_clastext        = ~CLASTEXT~
-				cmp_racetext        = ~RACETEXT~
-		END
+PRINT ~Instlling Campaign data...~
+SILENT
+OUTER_SET camp_number = 0
+ACTION_IF NOT FILE_EXISTS_IN_GAME ~campaign.2da~ BEGIN
+<<<<<<<< campaign.2da
+2DA            V1.0
+*
+               WORLDSCRIPT    DESCRIPTION    ICON           INTERDIA       LOADHINT       MASTAREA       MUSIC          NAME           NPCLEVEL       TBPPARTY       PDIALOG        SAVE_DIR       STARTARE       STRTGOLD       STARTPOS       STWEAPON       25STWEAP       XPCAP          XPLIST         WORLDMAP       WORLDSCRIPT    MAP_DROPSHADOW MAP_FONTCOLOR  KEEP_POWERS    INTRO_MOVIE    IMPORT         INTERACT       YEARS          REPUTATION     CLASTEXT       RACETEXT
+
+>>>>>>>>
+	COPY ~campaign.2da~ ~override~
+END
+COPY_EXISTING ~campaign.2da~ ~override~
+	COUNT_2DA_ROWS 3 camp_number
+	BUT_ONLY
+OUTER_SET cmpicon = camp_number
+ACTION_IF GAME_IS ~eet~ BEGIN
+	OUTER_SET cmpicon = cmplogo
+END
+LAF CAMPAIGN_EXISTS STR_VAR campaign=NWN RET cmp_exists = exists END
+ACTION_IF NOT cmp_exists BEGIN
+	LAF SET_CAMPAIGN_INFO
+		INT_VAR
+			create_new          = 1
+			cmp_icon            = cmpicon
+			cmp_music           = nwn_music
+			cmp_map_dropshadow  = 1
+			cmp_keep_powers     = 0
+		STR_VAR
+			campaign            = ~NWN~
+			cmp_worldscript     = ~NWNWSCRP~
+			cmp_interdia        = ~INTERDIA~
+			cmp_loadhint        = ~*~
+			cmp_masterarea      = ~MASTAREA~
+			cmp_npclevel        = ~*~
+			cmp_tbpparty        = ~25PARTY~
+			cmp_pdialog         = ~PDIALOG~
+			cmp_save_dir        = ~save~
+			cmp_startare        = ~NWSTARTA~
+			cmp_strtgold        = ~NWSTARTG~
+			cmp_startpos        = ~NWSTARTP~
+			cmp_stweapon        = ~STWEAPON~
+			cmp_25stweap        = ~STWEAPON~
+			cmp_xpcap           = ~*~
+			cmp_xplist          = ~*~
+			cmp_worldmap        = EVAL ~%NWNWORLD%~
+			cmp_worldscript2    = ~NWNWSCRP~
+			cmp_map_fontcolor   = ~0xFFFFFFFF~
+			cmp_intro_movie     = ~NWNPRE~
+			cmp_import          = ~PARTY~
+			cmp_interact        = ~INTERACT~
+			cmp_years           = ~D5NWYRS~
+			cmp_reputation      = ~NWNREPUT~
+			cmp_clastext        = ~CLASTEXT~
+			cmp_racetext        = ~RACETEXT~
 	END
-	COPY_EXISTING ~campaign.2da~ ~override~ PRETTY_PRINT_2DA
+END
+COPY_EXISTING ~campaign.2da~ ~override~ PRETTY_PRINT_2DA
 
-	OUTER_SET cnt = 2000210
-	OUTER_SPRINT nwn_title (AT cnt)
-	OUTER_PATCH_SAVE nwn_title ~%nwn_title%~ BEGIN
-		REPLACE_TEXTUALLY ~%LNL%~ ~\n~
-		REPLACE_TEXTUALLY ~"~ ~\"~
-	END
+OUTER_SET cnt = 2000210
+OUTER_SPRINT nwn_title (AT cnt)
+OUTER_PATCH_SAVE nwn_title ~%nwn_title%~ BEGIN
+	REPLACE_TEXTUALLY ~%LNL%~ ~\n~
+	REPLACE_TEXTUALLY ~"~ ~\"~
+END
 
-	OUTER_SET cnt = 2000200
-	OUTER_SPRINT nwn_text (AT cnt)
-	OUTER_PATCH_SAVE nwn_text ~%nwn_text%~ BEGIN
-		REPLACE_TEXTUALLY ~%LNL%~ ~\n~
-		REPLACE_TEXTUALLY ~"~ ~\"~
-	END
+OUTER_SET cnt = 2000200
+OUTER_SPRINT nwn_text (AT cnt)
+OUTER_PATCH_SAVE nwn_text ~%nwn_text%~ BEGIN
+	REPLACE_TEXTUALLY ~%LNL%~ ~\n~
+	REPLACE_TEXTUALLY ~"~ ~\"~
+END
 
+ACTION_IF GAME_IS ~eet~ BEGIN
 	COPY_EXISTING_REGEXP GLOB ~^M_.*\.LUA~ ~override~
 		/*chapters*/
 		SET exists = 0
@@ -212,7 +247,7 @@ ACTION_IF GAME_IS eet BEGIN
 		END
 		PATCH_IF exists BEGIN
 			SPRINT str_all ~~
-			SPRINT ~camp~ ~{id = 'NWN', name = 'EET_CMP_TITLE_NWN', description = 'EET_CMP_TEXT_NWN', title = %line_text%, bigLogo = %biglogo%, icon = %cmplogo%, background = 2, button = 2, sidebar = 2, importEnabled = false, tutorialEnabled = false, forceParty = false, cheatAreasTable = cheatAreas},~
+			SPRINT ~camp~ ~{id = 'NWN', name = 'EET_CMP_TITLE_NWN', description = 'EET_CMP_TEXT_NWN', title = %line_text%, ogo = %biglogo%, icon = %cmplogo%, background = 2, button = 2, sidebar = 2, importEnabled = false, tutorialEnabled = e, forceParty = false, cheatAreasTable = cheatAreas},~
 			FOR ( i = 1 ; i <= numpairs ; ++i ) BEGIN
 				SPRINT str $tables(~%i%~)
 				INNER_PATCH_SAVE sss ~%str%~ BEGIN
@@ -256,22 +291,147 @@ ACTION_IF GAME_IS eet BEGIN
 	COPY_EXISTING ~bgee.lua~ ~override~
 		REPLACE_TEXTUALLY ~START_CAMPAIGN_TUT = 7,~ ~START_CAMPAIGN_TUT = 7,%LNL%%TAB%START_CAMPAIGN_NWN = %camp_number%,~
 
-	OUTER_SPRINT tilde "~"
 	COPY_EXISTING ~ui.menu~ ~override~
 		REPLACE_TEXTUALLY ~(chapter == 0)~ ~(chapter == 0) and (checkCampaign %tilde%= const.START_CAMPAIGN_NWN)~
-		REPLACE_TEXTUALLY ~elseif (chapter > 0) and (chapter < 7) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) then~ ~elseif (chapter > 0) and (chapter < 5) and (checkCampaign %tilde%= const.START_CAMPAIGN_NWN) and (Infinity_GetScriptVarInt('NWN_Quest_Status') == 1) then
-			currentCampaign = const.START_CAMPAIGN_NWN
-		elseif (chapter > 0) and (chapter < 7) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) then~
+		REPLACE_TEXTUALLY ~elseif (chapter > 0) and (chapter < 7) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) then~ ~elseif (chapter > 0) and (chapter < 5) and (checkCampaign %tilde%= const.START_CAMPAIGN_NWN) and inity_GetScriptVarInt('NWN_Quest_Status') == 1) then
+		currentCampaign = const.START_CAMPAIGN_NWN
+	elseif (chapter > 0) and (chapter < 7) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) then~
 
 	ACTION_IF FILE_EXISTS ~EET/SoD_GUI/UI.MENU~ BEGIN
 		COPY ~EET/SoD_GUI/UI.MENU~ ~EET/SoD_GUI~
 			REPLACE_TEXTUALLY ~(chapter == 0)~ ~(chapter == 0) and (checkCampaign %tilde%= const.START_CAMPAIGN_NWN)~
-			REPLACE_TEXTUALLY ~elseif (chapter > 0) and (chapter < 7) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) then~ ~elseif (chapter > 0) and (chapter < 5) and (checkCampaign %tilde%= const.START_CAMPAIGN_NWN) and (Infinity_GetScriptVarInt('NWN_Quest_Status') == 1) then
-			currentCampaign = const.START_CAMPAIGN_NWN
-		elseif (chapter > 0) and (chapter < 7) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) then~
+			REPLACE_TEXTUALLY ~elseif (chapter > 0) and (chapter < 7) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) ~ ~elseif (chapter > 0) and (chapter < 5) and (checkCampaign %tilde%= const.START_CAMPAIGN_NWN) and inity_GetScriptVarInt('NWN_Quest_Status') == 1) then
+		currentCampaign = const.START_CAMPAIGN_NWN
+	elseif (chapter > 0) and (chapter < 7) and (checkCampaign %tilde%= const.START_CAMPAIGN_BG1) then~
+	END
+END ELSE BEGIN /*----*/
+	COPY_EXISTING ~bgee.lua~ ~override~
+		SET scn = camp_number + 3
+		REPLACE_TEXTUALLY ~JOURNAL_MODE_EDIT = 3,~ ~JOURNAL_MODE_EDIT = 3,%LNL%%LNL%%TAB%START_CAMPAIGN_NWN = %camp_number%,~
+	
+	OUTER_SET number = 0
+	COPY_EXISTING ~ui.menu~ ~override~
+		LPF FC_FIND_UI_MENU
+			STR_VAR
+				menu_name = "START"
+			RET
+				chargen_race_start = menu_text
+				menu_menu = menu_text_edit
+				success 
+				menu_menu_start = offset_start
+				menu_menu_end = offset_end
+		END
+		PATCH_IF success BEGIN
+			LPF FC_FIND_UI_MENU_ELEMENT_EX
+				STR_VAR menu_text = EVAL "%menu_menu%" element_name = "text" search_str = "LOGOTBP"
+				RET element_text success offset_start offset_end
+			END
+			PATCH_IF success BEGIN
+				INNER_PATCH_SAVE new_element_text ~%element_text%~ BEGIN
+					REPLACE_EVALUATE ~startThreeBookHighlight(\([0-9]+\))~
+					BEGIN
+						SET number = MATCH1 + camp_number
+					END
+					~startThreeBookHighlight(%number%)~
+					SET biglogo = number - 1
+					REPLACE_TEXTUALLY ~\([ %TAB%]*\)text.*$~ ~\1text CCCCCCCCCC~
+					REPLACE_TEXTUALLY ~LOGOTBP~ ~LOGONWN~
+					REPLACE_TEXTUALLY ~area.*$~ ~area 287 617 434 80~ /* coordinates */
+					REPLACE_TEXTUALLY ~logoFrame.*$~ ~logoFrame = %biglogo%~
+					REPLACE_TEXTUALLY ~startEngine.*$~ ~startEngine:OnCampaignButtonClick('NWN',true)~
+					REPLACE_TEXTUALLY ~highlightBP~ ~highlightNWN~
+				END
+				SPRINT ~element_text~ ~%element_text%%LNL%%TAB%%new_element_text%~
+				LPM FC_UPDATE_MENU_ELEMENT
+			END
+		END
+		LPF FC_RESTORE_MENU_COMMENTS STR_VAR menu_text = EVAL "%menu_menu%" RET menu_menu = menu_text END
+		INNER_PATCH_SAVE menu_menu ~%menu_menu%~ BEGIN
+			REPLACE_TEXTUALLY ~CCCCCCCCCC.*$~ ~--nevervinter nights~
+		END
+		PATCH_IF success BEGIN
+			SET len = STRING_LENGTH ~%menu_menu%~
+			DELETE_BYTES menu_menu_start ( menu_menu_end - menu_menu_start )
+			INSERT_BYTES menu_menu_start len
+			WRITE_ASCIIE menu_menu_start ~%menu_menu%~
+		END
+		PATCH_FOR_EACH menus IN START_MAIN START_SP START_MP BEGIN
+			LPF FC_FIND_UI_MENU
+				STR_VAR
+					menu_name = EVAL "%menus%"
+				RET
+					chargen_race_start = menu_text
+					menu_menu = menu_text_edit
+					success 
+					menu_menu_start = offset_start
+					menu_menu_end = offset_end
+			END
+			PATCH_IF success BEGIN
+				LPF FC_FIND_UI_MENU_ELEMENT_EX
+					STR_VAR menu_text = EVAL "%menu_menu%" element_name = "label" search_str = "TITLE"
+					RET element_text success offset_start offset_end
+				END
+				PATCH_IF success BEGIN
+					INNER_PATCH_SAVE element_text ~%element_text%~ BEGIN
+						REPLACE_TEXTUALLY ~bam.*$~ ~bam lua 'GetLogoTitle()'~
+						REPLACE_TEXTUALLY ~frame.*$~ ~frame lua 'GetLogoFrame()'~
+					END
+					LPM FC_UPDATE_MENU_ELEMENT
+				END
+			END
+			LPF FC_RESTORE_MENU_COMMENTS STR_VAR menu_text = EVAL "%menu_menu%" RET menu_menu = menu_text END
+			PATCH_IF success BEGIN
+				SET len = STRING_LENGTH ~%menu_menu%~
+				DELETE_BYTES menu_menu_start ( menu_menu_end - menu_menu_start )
+				INSERT_BYTES menu_menu_start len
+				WRITE_ASCIIE menu_menu_start ~%menu_menu%~
+			END
+		END
+		REPLACE_TEXTUALLY ~function startThreeBookHighlight(book)~ ~highlightNWN = 0
+	function GetLogoTitle()
+		if logoFrame == %biglogo% then
+			return 'TITLEN'
+		else
+			return 'TITLE'
+		end
+	end
+	function GetLogoFrame()
+		if logoFrame == %biglogo% then
+			return 0
+		else
+			return logoFrame
+		end
+	end
+	
+	function startThreeBookHighlight(book)
+		if book == %number% and highlightNWN == true then
+			return 1
+		end~
+
+	OUTER_SPRINT pref ~~
+	COPY ~%MOD_FOLDER%/logopis/0000.bam~ ~override/TITLEN.bam~
+		LPF FIND_FREE_PVRZ_INDEX RET free_index END
+		PATCH_IF ( free_index >= 0 ) BEGIN
+			READ_LONG 0x10 datacnt
+			READ_LONG 0x1c dataoff
+			FOR ( i = 0 ; i < datacnt ; ++i ) BEGIN
+				WRITE_LONG dataoff + i * 0x1c free_index
+			END
+			SPRINT pref ~____~
+		END
+	ACTION_IF ( ~%pref%~ STR_EQ ~____~ ) BEGIN
+		ACTION_IF free_index < 10 BEGIN OUTER_SPRINT pref ~000%free_index%~ END
+		ELSE ACTION_IF free_index < 100 BEGIN OUTER_SPRINT pref ~00%free_index%~ END
+		ELSE ACTION_IF free_index < 1000 BEGIN OUTER_SPRINT pref ~0%free_index%~ END
+		ELSE BEGIN OUTER_SPRINT pref ~%free_index%~ END
+		COPY ~%MOD_FOLDER%/logopis/MOS1000.pvrz~ ~override/MOS%pref%.pvrz~
 	END
 END
+VERBOSE
 
+
+PRINT ~Patching scris and dialogue files...~
+SILENT //scripts/dialogues
 //NWN_BG
 OUTER_SET nwnbg = 0 - 1
 OUTER_SPRINT scr_nwn_bg ~~
@@ -327,6 +487,18 @@ COPY_EXISTING_REGEXP GLOB ~^NW.*\.bcs~ ~override~
 	END
 	BUT_ONLY_IF_IT_CHANGES
 
+COPY_EXISTING ~NW1001.bcs~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		LPF GET_SCRIPT_BLOCK
+			STR_VAR search_regexp = ~NWMessenger_of_Neverwinter~
+			RET start_offset end_offset 
+		END
+		PATCH_IF ( start_offset >= 0 ) BEGIN
+			DELETE_BYTES start_offset ( end_offset - start_offset )
+		END
+	END
+	BUT_ONLY_IF_IT_CHANGES
+
 <<<<<<<< NW1000_.baf
 IF
 	Global("NWMessenger_of_Neverwinter","GLOBAL",0)
@@ -355,7 +527,7 @@ COPY_EXISTING ~NWTON.bcs~ ~override~
 OUTER_INNER_PATCH_SAVE scr_nwn_bg ~%scr_nwn_bg%~ BEGIN
 	REPLACE_TEXTUALLY ~True()~ ~Global("NWStandalone","GLOBAL",1)~
 	REPLACE_TEXTUALLY ~FadeToColor.*$~ ~FadeToColor([0.0],0)~
-	REPLACE_TEXTUALLY ~Wait(2)[ %TAB%%LNL%%MNL%%LNL%]*Leave~ ~Wait(1) UndoExplore() Leave~
+	REPLACE_TEXTUALLY ~Wait(2)[ %TAB%%LNL%%MNL%%LNL%]*Leave~ ~Wait(1) UndoExplore() SetGlobal("Reveal","MYAREA",0) Leave~
 	REPLACE_TEXTUALLY ~Wait(1)[ %TAB%%LNL%%MNL%%LNL%]*Explore~ ~Explore~
 	REPLACE_TEXTUALLY ~SetWorldmap.*$~ ~~
 	REPLACE_TEXTUALLY ~Wait(1)[ %TAB%%LNL%%MNL%%LNL%]*StartMovie.*$~ ~~
@@ -365,6 +537,21 @@ END
 %scr_nwn_bg%
 >>>>>>>>
 EXTEND_BOTTOM ~NWTON.bcs~ ~NWTON_.baf~ EVALUATE_BUFFER
+
+COPY_EXISTING ~NWMESS.dlg~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~StartCutScene[EeXx]*("NWTON",.*)~ ~StartCutSceneEx("NWTON",TRUE)~
+	END
+VERBOSE
+
+ACTION_IF GAME_IS ~bg2ee~ BEGIN
+	COPY ~%MOD_FOLDER%/LOGONWN.bam~ ~override~
+END
+
+
+
+
+
 
 
 
