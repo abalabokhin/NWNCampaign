@@ -4,7 +4,8 @@ INCLUDE ~nwncampaign/lib/func.tph~
 INCLUDE ~nwncampaign/lib/lua_functions.tph~
 /* todo:
 4. Главы НВН
-5. Количество золота. Надо в экселе таблицу накатать для оригинальных значений и на их основе сделать свою
+5. cheatAreasTable
+6. Количество золота. Надо в экселе таблицу накатать для оригинальных значений и на их основе сделать свою
 */ 
 OUTER_SPRINT tilde "~"
 <<<<<<<< file.file
@@ -117,7 +118,7 @@ OUTER_SPRINT ~script_text~ ~2DA             V1.0
 COPY ~file.file~ ~override/NWNREPUT.2DA~ EVALUATE_BUFFER PRETTY_PRINT_2DA
 VERBOSE
 
-ACTION_IF FILE_EXISTS_IN_GAME ~%NWNWORLD.WMP%~ BEGIN
+ACTION_IF FILE_EXISTS_IN_GAME ~NWNWORLD.WMP~ BEGIN
 	OUTER_SPRINT NWNWORLD ~NWNWORLD~
 END ELSE BEGIN
 	OUTER_SPRINT NWNWORLD ~WORLDMAP~
@@ -247,7 +248,7 @@ ACTION_IF GAME_IS ~eet~ BEGIN
 		END
 		PATCH_IF exists BEGIN
 			SPRINT str_all ~~
-			SPRINT ~camp~ ~{id = 'NWN', name = 'EET_CMP_TITLE_NWN', description = 'EET_CMP_TEXT_NWN', title = %line_text%, ogo = %biglogo%, icon = %cmplogo%, background = 2, button = 2, sidebar = 2, importEnabled = false, tutorialEnabled = e, forceParty = false, cheatAreasTable = cheatAreas},~
+			SPRINT ~camp~ ~{id = 'NWN', name = 'EET_CMP_TITLE_NWN', description = 'EET_CMP_TEXT_NWN', title = %line_text%, bigLogo = %biglogo%, icon = %cmplogo%, background = 2, button = 2, sidebar = 2, importEnabled = false, tutorialEnabled = false, forceParty = false, cheatAreasTable = cheatAreas},~
 			FOR ( i = 1 ; i <= numpairs ; ++i ) BEGIN
 				SPRINT str $tables(~%i%~)
 				INNER_PATCH_SAVE sss ~%str%~ BEGIN
@@ -506,6 +507,7 @@ IF
 THEN
 	RESPONSE #100
 		SetGlobal("NWStandalone","GLOBAL",1)
+		SetGlobal("DREAM","GLOBAL",7)
 		SetGlobal("Chapter","GLOBAL",0)
 		ClearAllActions()
 		StartCutSceneMode()
