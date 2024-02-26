@@ -72,6 +72,7 @@ DEFINE_PATCH_FUNCTION FC_FIND_UI_TABLE
 BEGIN
 	SET offset_start = (0 - 1)
 	SET offset_end = (0 - 1)
+	SET offset_open = (0 - 1)
 	SET numpairs = 0
 	CLEAR_ARRAY numpairs
 	SET offsA = INDEX_BUFFER(~%searchtabl%[ %TAB%%LNL%]*=[ %TAB%%LNL%]*{~)
