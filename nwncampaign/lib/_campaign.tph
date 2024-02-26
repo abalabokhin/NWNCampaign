@@ -15,7 +15,7 @@ LOAD_TRA ~%MOD_FOLDER%/nwn.tra~
 //worldscript 
 COMPILE ~%MOD_FOLDER%/NWNWSCRP.BAF~
 
-PRINT ~Instlling 2da files...~
+PRINT ~Installing 2da files...~
 SILENT //2da
 //song
 COPY_EXISTING ~songlist.2da~ ~override~
@@ -164,7 +164,7 @@ ACTION_IF GAME_IS ~eet~ BEGIN
 	PRINT ~New frame index = %cmplogo%~
 END
 
-PRINT ~Instlling Campaign data...~
+PRINT ~Installing Campaign data...~
 SILENT
 OUTER_SET camp_number = 0
 ACTION_IF NOT FILE_EXISTS_IN_GAME ~campaign.2da~ BEGIN
