@@ -462,7 +462,7 @@ END
 VERBOSE
 
 
-PRINT ~Patching scris and dialogue files...~
+PRINT ~Patching script and dialogue files...~
 SILENT //scripts/dialogues
 //NWN_BG
 OUTER_SET nwnbg = 0 - 1
