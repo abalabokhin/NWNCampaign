@@ -3,9 +3,9 @@ INCLUDE ~%MOD_FOLDER%/lib/campaigns.tph~
 INCLUDE ~%MOD_FOLDER%/lib/func.tph~
 INCLUDE ~%MOD_FOLDER%/lib/lua_functions.tph~
 /* todo:
-4. Главы НВН
-5. Год в НВН
-6. Количество золота. Надо в экселе таблицу накатать для оригинальных значений и на их основе сделать свою
+4. Р“Р»Р°РІС‹ РќР’Рќ
+5. Р“РѕРґ РІ РќР’Рќ
+6. РљРѕР»РёС‡РµСЃС‚РІРѕ Р·РѕР»РѕС‚Р°. РќР°РґРѕ РІ СЌРєСЃРµР»Рµ С‚Р°Р±Р»РёС†Сѓ РЅР°РєР°С‚Р°С‚СЊ РґР»СЏ РѕСЂРёРіРёРЅР°Р»СЊРЅС‹С… Р·РЅР°С‡РµРЅРёР№ Рё РЅР° РёС… РѕСЃРЅРѕРІРµ СЃРґРµР»Р°С‚СЊ СЃРІРѕСЋ
 */ 
 OUTER_SPRINT tilde "~"
 <<<<<<<< file.file
@@ -30,7 +30,7 @@ COPY_EXISTING ~songlist.2da~ ~override~
 	END
     BUT_ONLY_IF_IT_CHANGES
 ACTION_IF !(VARIABLE_IS_SET %nwn_music%) BEGIN
-	OUTER_SPRINT nwn_music ~*~
+	OUTER_SPRINT nwn_music ~-1~
 END
 
 //NWSTARTA
